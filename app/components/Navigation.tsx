@@ -34,8 +34,8 @@ export default function Navigation() {
 
           {/* CTA Buttons */}
           <div className="hidden md:flex md:items-center md:space-x-3">
-            <Button href="#" variant="secondary" size="md">
-              Log In
+            <Button href="/admin/login" variant="secondary" size="md">
+              Admin Login
             </Button>
             <Button href="#pricing" variant="primary">
               Empieza Gratis 14 Días

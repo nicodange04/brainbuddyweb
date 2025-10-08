@@ -13,7 +13,7 @@ import { MetricasSuscripciones } from './components/MetricasSuscripciones'
 import { GraficoCrecimiento } from './components/GraficoCrecimiento'
 
 export default function ReportesPage() {
-  const [user, setUser] = useState<any>(null)
+  const [user, setUser] = useState<{ id: string; email: string; rol: string } | null>(null)
   const [reportes, setReportes] = useState<RespuestaReportes | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -46,7 +46,11 @@ export default function ReportesPage() {
         return
       }
 
-      setUser(currentUser)
+      setUser({
+        id: currentUser.id,
+        email: currentUser.email || '',
+        rol: 'admin'
+      })
     } catch (err) {
       console.error('Auth check error:', err)
       router.push('/admin/login')

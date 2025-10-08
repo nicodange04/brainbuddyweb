@@ -5,13 +5,12 @@ import { useRouter } from 'next/navigation'
 import { configuracionService } from '@/lib/supabase/configuracion'
 import { authService } from '@/lib/supabase/auth'
 import { RespuestaConfiguracion } from '@/lib/types/configuracion'
-import Card from '@/app/components/Card'
 import { PlanesPrecios } from './components/PlanesPrecios'
 import { GestionAdmins } from './components/GestionAdmins'
 import { ConfiguracionSistema } from './components/ConfiguracionSistema'
 
 export default function ConfiguracionPage() {
-  const [user, setUser] = useState<any>(null)
+  const [user, setUser] = useState<{ id: string; email: string; rol: string } | null>(null)
   const [configuracion, setConfiguracion] = useState<RespuestaConfiguracion | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -44,7 +43,11 @@ export default function ConfiguracionPage() {
         return
       }
 
-      setUser(currentUser)
+      setUser({
+        id: currentUser.id,
+        email: currentUser.email || '',
+        rol: 'admin'
+      })
     } catch (err) {
       console.error('Auth check error:', err)
       router.push('/admin/login')
@@ -175,7 +178,7 @@ export default function ConfiguracionPage() {
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id as any)}
+                  onClick={() => setActiveTab(tab.id as 'planes' | 'admins' | 'sistema')}
                   className={`py-2 px-1 border-b-2 font-medium text-sm ${
                     activeTab === tab.id
                       ? 'border-violet-500 text-violet-600'

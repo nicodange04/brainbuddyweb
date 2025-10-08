@@ -33,11 +33,11 @@ export class UsuariosService {
       .select('*', { count: 'exact' })
 
     // Aplicar filtros
-    if (filtros.rol && filtros.rol !== '') {
+    if (filtros.rol) {
       query = query.eq('rol', filtros.rol)
     }
 
-    if (filtros.estado && filtros.estado !== '') {
+    if (filtros.estado) {
       if (filtros.estado === 'activo') {
         query = query.is('deleted_at', null)
       } else {

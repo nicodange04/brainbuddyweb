@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { ConfiguracionAdmins, AdminUsuario } from '@/lib/types/configuracion'
+import { ConfiguracionAdmins } from '@/lib/types/configuracion'
 import { configuracionService } from '@/lib/supabase/configuracion'
 import Card from '@/app/components/Card'
 

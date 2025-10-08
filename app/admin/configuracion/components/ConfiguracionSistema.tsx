@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { ConfiguracionSistema } from '@/lib/types/configuracion'
+import type { ConfiguracionSistema } from '@/lib/types/configuracion'
 import { configuracionService } from '@/lib/supabase/configuracion'
 import Card from '@/app/components/Card'
 
@@ -11,10 +11,10 @@ interface ConfiguracionSistemaProps {
 }
 
 export function ConfiguracionSistema({ data, onUpdate }: ConfiguracionSistemaProps) {
-  const [loading, setLoading] = useState(false)
+  const [, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  const handleUpdateConfig = async (nuevaConfiguracion: any) => {
+  const handleUpdateConfig = async (nuevaConfiguracion: Record<string, unknown>) => {
     try {
       setLoading(true)
       setError('')
@@ -166,7 +166,7 @@ export function ConfiguracionSistema({ data, onUpdate }: ConfiguracionSistemaPro
               onChange={(e) => handleUpdateConfig({
                 logs: {
                   ...data.logs,
-                  nivel: e.target.value as any
+                  nivel: e.target.value as 'error' | 'warn' | 'info' | 'debug'
                 }
               })}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500"

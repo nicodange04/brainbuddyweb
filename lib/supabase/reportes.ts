@@ -13,7 +13,7 @@ export class ReportesService {
   private supabase = createSupabaseClient()
 
   // Obtener métricas de usuarios
-  private async getMetricasUsuarios(filtros: FiltrosReportes): Promise<MetricasUsuarios> {
+  private async getMetricasUsuarios(): Promise<MetricasUsuarios> {
     const { data: usuarios, error } = await this.supabase
       .from('usuarios')
       .select('rol, deleted_at, created_at')
@@ -181,7 +181,7 @@ export class ReportesService {
   async getReportes(filtros: FiltrosReportes = { periodo: 'mes' }): Promise<RespuestaReportes> {
     try {
       const [usuarios, financiero, suscripciones, crecimiento] = await Promise.all([
-        this.getMetricasUsuarios(filtros),
+        this.getMetricasUsuarios(),
         this.getMetricasFinancieras(),
         this.getMetricasSuscripciones(),
         this.getDatosCrecimiento()

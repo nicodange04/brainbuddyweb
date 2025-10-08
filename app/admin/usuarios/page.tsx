@@ -13,7 +13,7 @@ import { UsuarioForm } from './components/UsuarioForm'
 import { UsuarioDetail } from './components/UsuarioDetail'
 
 export default function UsuariosPage() {
-  const [user, setUser] = useState<any>(null)
+  const [user, setUser] = useState<{ id: string; email: string; rol: string } | null>(null)
   const [usuarios, setUsuarios] = useState<RespuestaUsuarios | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -51,7 +51,11 @@ export default function UsuariosPage() {
         return
       }
 
-      setUser(currentUser)
+      setUser({
+        id: currentUser.id,
+        email: currentUser.email || '',
+        rol: 'admin'
+      })
     } catch (err) {
       console.error('Auth check error:', err)
       router.push('/admin/login')

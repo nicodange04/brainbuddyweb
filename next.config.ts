@@ -1,7 +1,45 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Configuración para Vercel
+  output: 'standalone',
+  
+  // Configuración de imágenes
+  images: {
+    domains: ['localhost'],
+    formats: ['image/webp', 'image/avif'],
+  },
+  
+  // Configuración de headers para seguridad
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY',
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'origin-when-cross-origin',
+          },
+        ],
+      },
+    ];
+  },
+  
+  // Configuración experimental para Next.js 15
+  experimental: {
+    staleTimes: {
+      dynamic: 30,
+      static: 180,
+    },
+  },
 };
 
 export default nextConfig;

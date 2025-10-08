@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Button from '@/app/components/Button';
 import Card from '@/app/components/Card';
@@ -138,9 +139,9 @@ export default function AdminLoginPage() {
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
               ¿No eres admin?{' '}
-              <a href="/" className="text-violet-600 hover:text-violet-500 font-medium">
+              <Link href="/" className="text-violet-600 hover:text-violet-500 font-medium">
                 Volver al inicio
-              </a>
+              </Link>
             </p>
           </div>
         </Card>

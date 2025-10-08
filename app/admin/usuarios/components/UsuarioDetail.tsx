@@ -191,16 +191,16 @@ export function UsuarioDetail({ usuario, onClose, onEdit }: UsuarioDetailProps) 
                       <span className="text-gray-600">Vigencia:</span>
                       <span className="font-medium">{usuario.suscripcion_vigente}</span>
                     </div>
-                    {usuario.fecha_inicio && (
+                    {usuario.created_at && (
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Inicio:</span>
-                        <span className="font-medium">{formatDate(usuario.fecha_inicio)}</span>
+                        <span className="text-gray-600">Registro:</span>
+                        <span className="font-medium">{formatDate(usuario.created_at)}</span>
                       </div>
                     )}
-                    {usuario.fecha_fin && (
+                    {usuario.updated_at && (
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Fin:</span>
-                        <span className="font-medium">{formatDate(usuario.fecha_fin)}</span>
+                        <span className="text-gray-600">Actualizado:</span>
+                        <span className="font-medium">{formatDate(usuario.updated_at)}</span>
                       </div>
                     )}
                   </div>

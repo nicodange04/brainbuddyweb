@@ -200,7 +200,7 @@ export class ConfiguracionService {
   }
 
   // Actualizar configuración de sistema
-  async actualizarConfiguracionSistema(configuracion: any) {
+  async actualizarConfiguracionSistema(configuracion: Partial<ConfiguracionCompleta>) {
     // Por ahora solo simulamos la actualización
     console.log('Actualizando configuración del sistema:', configuracion)
     return { success: true, message: 'Configuración actualizada correctamente' }

@@ -1,8 +1,5 @@
 import { createSupabaseClient } from './client'
-import { Database, Tables, Inserts } from '@/lib/types/database'
-
-type Usuario = Tables<'usuarios'>
-type NewUsuario = Inserts<'usuarios'>
+// Types are used in the service methods
 
 export class AuthService {
   private supabase = createSupabaseClient()

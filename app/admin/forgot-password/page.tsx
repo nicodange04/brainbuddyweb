@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import Button from '@/app/components/Button';
 import Card from '@/app/components/Card';
 import { authService } from '@/lib/supabase/auth';
@@ -18,7 +19,7 @@ export default function ForgotPasswordPage() {
     setMessage('');
 
     try {
-      const { data, error: resetError } = await authService.resetPassword(email);
+      const { error: resetError } = await authService.resetPassword(email);
       
       if (resetError) {
         setError('Error al enviar el email de recuperación');
@@ -99,9 +100,9 @@ export default function ForgotPasswordPage() {
               </a>
             </p>
             <p className="text-sm text-gray-600">
-              <a href="/" className="text-violet-600 hover:text-violet-500 font-medium">
+              <Link href="/" className="text-violet-600 hover:text-violet-500 font-medium">
                 ← Volver al inicio
-              </a>
+              </Link>
             </p>
           </div>
         </Card>

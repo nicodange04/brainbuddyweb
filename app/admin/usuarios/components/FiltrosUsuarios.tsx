@@ -128,7 +128,7 @@ export function FiltrosUsuarios({ filtros, onFiltrosChange }: FiltrosUsuariosPro
         <div className="text-sm text-gray-600">
           {hasActiveFilters && (
             <span>
-              Filtros activos: {Object.entries(filtros).filter(([_, value]) => value && value !== '').length}
+              Filtros activos: {Object.entries(filtros).filter(([, value]) => value && value !== '').length}
             </span>
           )}
         </div>
@@ -152,12 +152,12 @@ export function FiltrosUsuarios({ filtros, onFiltrosChange }: FiltrosUsuariosPro
       {hasActiveFilters && (
         <div className="pt-4 border-t border-gray-200">
           <div className="flex flex-wrap gap-2">
-            {filtros.rol && filtros.rol !== '' && (
+            {filtros.rol && (
               <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-violet-100 text-violet-800 rounded-full">
                 Rol: {filtros.rol}
                 <button
                   onClick={() => {
-                    const newFiltros = { ...localFiltros, rol: '' }
+                    const newFiltros = { ...localFiltros, rol: undefined }
                     setLocalFiltros(newFiltros)
                     onFiltrosChange(newFiltros)
                   }}
@@ -167,12 +167,12 @@ export function FiltrosUsuarios({ filtros, onFiltrosChange }: FiltrosUsuariosPro
                 </button>
               </span>
             )}
-            {filtros.estado && filtros.estado !== '' && (
+            {filtros.estado && (
               <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-purple-100 text-purple-800 rounded-full">
                 Estado: {filtros.estado}
                 <button
                   onClick={() => {
-                    const newFiltros = { ...localFiltros, estado: '' }
+                    const newFiltros = { ...localFiltros, estado: undefined }
                     setLocalFiltros(newFiltros)
                     onFiltrosChange(newFiltros)
                   }}

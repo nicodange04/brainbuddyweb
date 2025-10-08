@@ -22,7 +22,7 @@ export class UsuariosService {
     return result
   }
 
-  // Obtener lista de usuarios con filtros y paginación
+  // Cambio de info para hacer un final commit
   async getUsuarios(
     filtros: FiltrosUsuarios = {},
     page: number = 1,

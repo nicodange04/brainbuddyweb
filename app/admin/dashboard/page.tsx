@@ -203,7 +203,10 @@ export default function AdminDashboard() {
           <Card className="p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Acciones Rápidas</h3>
             <div className="space-y-3">
-              <button className="w-full text-left p-3 bg-violet-50 rounded-lg hover:bg-violet-100 transition-colors">
+              <button 
+                onClick={() => router.push('/admin/usuarios')}
+                className="w-full text-left p-3 bg-violet-50 rounded-lg hover:bg-violet-100 transition-colors"
+              >
                 <span className="text-violet-600 font-medium">👥 Gestionar Usuarios</span>
               </button>
               <button className="w-full text-left p-3 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors">

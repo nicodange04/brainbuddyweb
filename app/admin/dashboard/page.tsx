@@ -209,7 +209,10 @@ export default function AdminDashboard() {
               >
                 <span className="text-violet-600 font-medium">👥 Gestionar Usuarios</span>
               </button>
-              <button className="w-full text-left p-3 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors">
+              <button 
+                onClick={() => router.push('/admin/reportes')}
+                className="w-full text-left p-3 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors"
+              >
                 <span className="text-purple-600 font-medium">📊 Ver Reportes</span>
               </button>
               <button className="w-full text-left p-3 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition-colors">

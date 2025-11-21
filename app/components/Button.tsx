@@ -34,10 +34,9 @@ export default function Button({
   };
 
   // Las clases personalizadas tienen prioridad sobre las variantes
-  const variantClasses = className.includes('bg-') || className.includes('border-') 
-    ? '' 
-    : variants[variant]
-  const classes = `${baseClasses} ${variantClasses} ${sizes[size]} ${className}`;
+  const hasCustomStyles = className && (className.includes('bg-') || className.includes('border-'))
+  const variantClasses = hasCustomStyles ? '' : variants[variant]
+  const classes = `${baseClasses} ${variantClasses} ${sizes[size]} ${className || ''}`;
 
   if (href) {
     return (

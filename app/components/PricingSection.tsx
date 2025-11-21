@@ -164,7 +164,7 @@ export default function PricingSection() {
                         frequency="monthly"
                         variant="primary"
                         size="lg"
-                        className="w-full !bg-transparent !border-2 !border-violet-500 !text-violet-600 hover:!bg-violet-50"
+                        className="w-full bg-transparent border-2 border-violet-500 text-violet-600 hover:bg-violet-50"
                       />
                     </div>
                   )}

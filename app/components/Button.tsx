@@ -33,7 +33,11 @@ export default function Button({
     lg: 'px-8 py-4 text-lg'
   };
 
-  const classes = `${baseClasses} ${variants[variant]} ${sizes[size]} ${className}`;
+  // Las clases personalizadas tienen prioridad sobre las variantes
+  const variantClasses = className.includes('bg-') || className.includes('border-') 
+    ? '' 
+    : variants[variant]
+  const classes = `${baseClasses} ${variantClasses} ${sizes[size]} ${className}`;
 
   if (href) {
     return (

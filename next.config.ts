@@ -40,6 +40,13 @@ const nextConfig: NextConfig = {
       static: 180,
     },
   },
+  
+  // Deshabilitar trace para evitar problemas de permisos en Windows
+  logging: {
+    fetches: {
+      fullUrl: false,
+    },
+  },
 };
 
 export default nextConfig;

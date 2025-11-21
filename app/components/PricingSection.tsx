@@ -1,5 +1,8 @@
+'use client'
+
 import Button from './Button';
 import Card from './Card';
+import CheckoutButton from './CheckoutButton';
 
 export default function PricingSection() {
   const plans = [
@@ -115,16 +118,56 @@ export default function PricingSection() {
                   </ul>
 
                   {/* CTA Button */}
-                  <Button 
-                    variant={
-                      plan.color === 'violet' ? 'accent' :
-                      plan.color === 'purple' ? 'secondary' : 'primary'
-                    }
-                    className="w-full"
-                    size="lg"
-                  >
-                    {plan.cta}
-                  </Button>
+                  {plan.name === 'Free Trial' ? (
+                    <Button 
+                      variant={
+                        plan.color === 'violet' ? 'accent' :
+                        plan.color === 'purple' ? 'secondary' : 'primary'
+                      }
+                      className="w-full"
+                      size="lg"
+                    >
+                      {plan.cta}
+                    </Button>
+                  ) : (
+                    <div className="space-y-2">
+                      {/* Botón Anual - Arriba, todo violeta */}
+                      {plan.name !== 'Free Trial' && (
+                        <CheckoutButton
+                          plan={{
+                            id: plan.name.toLowerCase().replace(' ', '-'),
+                            nombre: plan.name,
+                            descripcion: plan.description,
+                            precio_mensual: parseFloat(plan.price.replace('$', '')),
+                            precio_anual: plan.name === 'Plan Familiar' ? 149.99 : 99.99,
+                            caracteristicas: plan.features,
+                            activo: true
+                          }}
+                          frequency="annual"
+                          variant="primary"
+                          size="lg"
+                          className="w-full"
+                        />
+                      )}
+                      
+                      {/* Botón Mensual - Abajo, borde violeta y texto violeta */}
+                      <CheckoutButton
+                        plan={{
+                          id: plan.name.toLowerCase().replace(' ', '-'),
+                          nombre: plan.name,
+                          descripcion: plan.description,
+                          precio_mensual: parseFloat(plan.price.replace('$', '')),
+                          precio_anual: plan.name === 'Plan Familiar' ? 149.99 : 99.99,
+                          caracteristicas: plan.features,
+                          activo: true
+                        }}
+                        frequency="monthly"
+                        variant="primary"
+                        size="lg"
+                        className="w-full !bg-transparent !border-2 !border-violet-500 !text-violet-600 hover:!bg-violet-50"
+                      />
+                    </div>
+                  )}
                 </div>
               </Card>
             </div>

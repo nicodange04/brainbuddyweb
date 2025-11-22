@@ -9,7 +9,7 @@ interface CheckoutButtonProps {
   frequency: 'monthly' | 'annual'
   onSuccess?: () => void
   onError?: (error: string) => void
-  variant?: 'primary' | 'secondary' | 'outline'
+  variant?: 'primary' | 'secondary' | 'accent'
   size?: 'sm' | 'md' | 'lg'
   className?: string
 }

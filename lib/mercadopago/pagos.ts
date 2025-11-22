@@ -130,10 +130,11 @@ export class MercadoPagoService {
   /**
    * Obtiene información de un pago
    */
-  async getPayment(paymentId: string) {
+  async getPayment(_paymentId: string) {
     try {
       // Nota: Necesitarías el SDK de Payments para esto
       // Por ahora retornamos null y lo manejamos en el webhook
+      // TODO: Implementar obtención de pago desde Mercado Pago API
       return null
     } catch (error) {
       console.error('Error al obtener pago:', error)

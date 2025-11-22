@@ -75,7 +75,10 @@ export class MercadoPagoService {
           }
         ],
         payer: {
-          email: data.userEmail || 'test_user@testuser.com' // Email válido para sandbox
+          email: data.userEmail || 'test_user@testuser.com',
+          // Agregar más información del payer para sandbox
+          name: 'Test',
+          surname: 'User'
         },
         back_urls: {
           success: successUrl,

@@ -33,6 +33,7 @@ export default function UsuariosPage() {
     if (user) {
       loadUsuarios()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, filtros, currentPage])
 
   const checkAuth = async () => {

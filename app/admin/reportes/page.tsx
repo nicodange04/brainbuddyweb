@@ -28,6 +28,7 @@ export default function ReportesPage() {
     if (user) {
       loadReportes()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, filtros])
 
   const checkAuth = async () => {

@@ -17,6 +17,7 @@ export function UsuarioDetail({ usuario, onClose, onEdit }: UsuarioDetailProps) 
 
   useEffect(() => {
     loadHistorialSuscripciones()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [usuario.usuario_id])
 
   const loadHistorialSuscripciones = async () => {

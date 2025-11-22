@@ -126,15 +126,26 @@ export class MercadoPagoService {
         init_point: response.init_point,
         sandbox_init_point: response.sandbox_init_point || response.init_point
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Log detallado del error
       console.error('❌ Error al crear preferencia de Mercado Pago:', error)
       console.error('Tipo de error:', typeof error)
       
       // Extraer información útil del error
-      const errorMessage = error?.message || String(error)
-      const errorStatus = error?.status || error?.statusCode
-      const errorResponse = error?.response || error?.data
+      let errorMessage = 'Error desconocido'
+      let errorStatus: number | undefined
+      let errorResponse: unknown
+      
+      if (error instanceof Error) {
+        errorMessage = error.message
+      } else if (typeof error === 'object' && error !== null) {
+        const errorObj = error as Record<string, unknown>
+        errorMessage = String(errorObj.message || errorObj.error || error)
+        errorStatus = errorObj.status as number | undefined || errorObj.statusCode as number | undefined
+        errorResponse = errorObj.response || errorObj.data
+      } else {
+        errorMessage = String(error)
+      }
       
       console.error('📋 Detalles del error:', {
         message: errorMessage,

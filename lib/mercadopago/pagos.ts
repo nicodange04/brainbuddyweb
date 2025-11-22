@@ -2,7 +2,8 @@ import { createMercadoPagoClient } from './client'
 import type { 
   CreatePreferenceRequest, 
   SubscriptionPaymentData,
-  MercadoPagoPreference 
+  MercadoPagoPreference,
+  MercadoPagoPayment
 } from '@/lib/types/mercadopago'
 
 export class MercadoPagoService {
@@ -29,10 +30,30 @@ export class MercadoPagoService {
     }
 
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+      // Determinar la URL base según el ambiente
+      const baseUrl = process.env.NODE_ENV === 'development' 
+        ? (process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000')
+        : (process.env.NEXT_PUBLIC_APP_URL || 'https://brainbuddyweb.vercel.app')
       
-      // Calcular precio según frecuencia
-      const unitPrice = data.amount
+      console.log('🌐 URL base configurada:', baseUrl)
+      
+      // Calcular precio según frecuencia y validar
+      let unitPrice = parseFloat(data.amount.toString())
+      
+      // Validar que el precio sea válido y mayor a 0
+      if (isNaN(unitPrice) || unitPrice <= 0) {
+        throw new Error(`El precio debe ser mayor a 0. Precio recibido: ${data.amount}`)
+      }
+      
+      // Mercado Pago requiere que el precio tenga máximo 2 decimales
+      unitPrice = Math.round(unitPrice * 100) / 100
+      
+      // Validar monto mínimo según la moneda
+      // Mercado Pago Argentina requiere mínimo $100 ARS para pagos con tarjeta
+      if (data.currency === 'ARS' && unitPrice < 100) {
+        throw new Error('El monto mínimo para pagos en ARS con tarjeta es $100. El precio actual es demasiado bajo.')
+      }
+      
       const description = data.frequency === 'monthly' 
         ? `Suscripción mensual - ${data.planName}`
         : `Suscripción anual - ${data.planName}`
@@ -54,16 +75,18 @@ export class MercadoPagoService {
           }
         ],
         payer: {
-          email: data.userEmail
+          email: data.userEmail || 'test_user@testuser.com' // Email válido para sandbox
         },
         back_urls: {
           success: successUrl,
           failure: failureUrl,
           pending: pendingUrl
         },
+        auto_return: 'approved',
         notification_url: `${baseUrl}/api/mercadopago/webhook`,
         external_reference: `subscription_${data.userId}_${data.planId}_${Date.now()}`,
-        statement_descriptor: 'BrainBuddy'
+        statement_descriptor: 'BrainBuddy',
+        binary_mode: false // Permitir pagos en proceso
       } as CreatePreferenceRequest
       
       // Validar que las URLs estén definidas antes de enviar
@@ -72,6 +95,12 @@ export class MercadoPagoService {
       }
 
       console.log('📤 Enviando preferencia a Mercado Pago...')
+      console.log('💰 Precio validado:', {
+        original: data.amount,
+        processed: unitPrice,
+        currency: data.currency,
+        meetsMinimum: unitPrice >= 100
+      })
       console.log('📋 Datos de preferencia:', JSON.stringify(preferenceData, null, 2))
       
       const response = await this.client.preferences.create({ body: preferenceData })
@@ -79,7 +108,11 @@ export class MercadoPagoService {
       console.log('📥 Respuesta de Mercado Pago:', {
         id: response.id,
         hasInitPoint: !!response.init_point,
-        hasSandboxInitPoint: !!response.sandbox_init_point
+        hasSandboxInitPoint: !!response.sandbox_init_point,
+        initPoint: response.init_point?.substring(0, 100) + '...',
+        sandboxInitPoint: response.sandbox_init_point?.substring(0, 100) + '...',
+        status: response.status,
+        status_detail: response.status_detail
       })
 
       if (!response.id || !response.init_point) {
@@ -133,14 +166,29 @@ export class MercadoPagoService {
   }
 
   /**
-   * Obtiene información de un pago
+   * Obtiene información de un pago desde Mercado Pago
    */
-  async getPayment() {
+  async getPayment(paymentId: string) {
     try {
-      // Nota: Necesitarías el SDK de Payments para esto
-      // Por ahora retornamos null y lo manejamos en el webhook
-      // TODO: Implementar obtención de pago desde Mercado Pago API
-      return null
+      if (!this.client) {
+        throw new Error('Mercado Pago no está configurado')
+      }
+
+      // Hacer llamada a la API de Mercado Pago para obtener el pago
+      const response = await fetch(`https://api.mercadopago.com/v1/payments/${paymentId}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${process.env.MERCADOPAGO_ACCESS_TOKEN}`,
+          'Content-Type': 'application/json'
+        }
+      })
+
+      if (!response.ok) {
+        throw new Error(`Error al obtener pago: ${response.statusText}`)
+      }
+
+      const payment = await response.json()
+      return payment as MercadoPagoPayment
     } catch (error) {
       console.error('Error al obtener pago:', error)
       throw error

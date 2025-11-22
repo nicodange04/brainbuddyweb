@@ -67,8 +67,8 @@ export class ReportesService {
     const familiarActivas = suscripcionesActivas.filter(s => s.plan === 'Plan Familiar').length
 
     // Calcular ingresos (precios estimados)
-    const precioEstudiante = 9.99
-    const precioFamiliar = 14.99
+    const precioEstudiante = 100
+    const precioFamiliar = 250
     
     const ingresosEstudiante = estudianteActivas * precioEstudiante
     const ingresosFamiliar = familiarActivas * precioFamiliar

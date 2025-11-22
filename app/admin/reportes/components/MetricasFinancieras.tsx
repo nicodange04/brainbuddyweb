@@ -9,9 +9,9 @@ interface MetricasFinancierasProps {
 
 export function MetricasFinancieras({ data }: MetricasFinancierasProps) {
   const formatearMoneda = (cantidad: number) => {
-    return new Intl.NumberFormat('es-ES', {
+    return new Intl.NumberFormat('es-AR', {
       style: 'currency',
-      currency: 'USD'
+      currency: 'ARS'
     }).format(cantidad)
   }
 

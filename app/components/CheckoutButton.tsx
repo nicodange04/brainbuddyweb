@@ -28,23 +28,47 @@ export default function CheckoutButton({
       setLoading(true)
 
       // Calcular precio según frecuencia
-      const amount = frequency === 'monthly' 
+      let amount = frequency === 'monthly' 
         ? plan.precio_mensual 
         : (plan.precio_anual || plan.precio_mensual * 12)
+      
+      // Asegurar que el precio sea un número válido
+      amount = parseFloat(amount.toString())
+      
+      console.log('💰 Precio calculado:', {
+        frequency,
+        precio_mensual: plan.precio_mensual,
+        precio_anual: plan.precio_anual,
+        amount,
+        planName: plan.nombre
+      })
+      
+      if (isNaN(amount) || amount <= 0) {
+        throw new Error(`El precio del plan no es válido: ${amount}`)
+      }
+      
+      // Validar monto mínimo de Mercado Pago
+      if (amount < 100) {
+        throw new Error(`El monto mínimo es $100 ARS. El precio actual es $${amount} ARS`)
+      }
 
       // Crear preferencia de pago
+      const requestBody = {
+        planId: plan.id,
+        planName: plan.nombre,
+        amount,
+        currency: 'ARS', // Pesos argentinos
+        frequency
+      }
+      
+      console.log('📤 Enviando request a Mercado Pago:', requestBody)
+      
       const response = await fetch('/api/mercadopago/preference', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          planId: plan.id,
-          planName: plan.nombre,
-          amount,
-          currency: 'USD', // Cambiar según tu necesidad
-          frequency
-        })
+        body: JSON.stringify(requestBody)
       })
 
       if (!response.ok) {

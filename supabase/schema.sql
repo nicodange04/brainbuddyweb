@@ -190,8 +190,8 @@ SELECT
     COUNT(CASE WHEN u.created_at >= NOW() - INTERVAL '30 days' THEN 1 END) as usuarios_mes_actual,
     COUNT(CASE WHEN sl.created_at >= NOW() - INTERVAL '30 days' THEN 1 END) as suscripciones_mes_actual,
     ROUND(
-        (COUNT(CASE WHEN sl.plan = 'Plan Familiar' THEN 1 END) * 14.99 +
-         COUNT(CASE WHEN sl.plan = 'Plan Estudiante' THEN 1 END) * 9.99), 2
+        (COUNT(CASE WHEN sl.plan = 'Plan Familiar' THEN 1 END) * 250 +
+         COUNT(CASE WHEN sl.plan = 'Plan Estudiante' THEN 1 END) * 100), 2
     ) as mrr_estimado
 FROM usuarios u
 LEFT JOIN admin a ON a.admin_id = u.usuario_id

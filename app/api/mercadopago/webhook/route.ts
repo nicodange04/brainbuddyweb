@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import type { MercadoPagoWebhook } from '@/lib/types/mercadopago'
+import { mercadoPagoService } from '@/lib/mercadopago/pagos'
+import { suscripcionesService } from '@/lib/supabase/suscripciones'
 
 export const maxDuration = 30
 
@@ -12,26 +14,95 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ received: true })
     }
 
-    // Obtener información del pago desde Mercado Pago
-    // Nota: Necesitarías hacer una llamada a la API de Mercado Pago aquí
-    // Por ahora, procesamos con la información del webhook
+    const paymentId = body.data.id
     
-    if (body.action === 'payment.created' || body.action === 'payment.updated') {
-      // El pago fue creado o actualizado
-      // Aquí deberías:
-      // 1. Obtener el pago completo desde Mercado Pago
-      // 2. Actualizar la suscripción en la base de datos
-      // 3. Activar/desactivar según el estado del pago
-      
-      console.log('Webhook recibido:', {
-        paymentId: body.data.id,
-        action: body.action,
-        type: body.type
-      })
-      
-      // TODO: Implementar lógica para actualizar suscripción en base de datos
-      // const supabase = await createSupabaseServerClient()
-      // Actualizar suscripción según el estado del pago
+    // Obtener información completa del pago desde Mercado Pago
+    const payment = await mercadoPagoService.getPayment(paymentId)
+    
+    if (!payment) {
+      console.error('No se pudo obtener información del pago:', paymentId)
+      return NextResponse.json({ received: true })
+    }
+
+    console.log('📦 Webhook recibido - Pago:', {
+      paymentId: payment.id,
+      status: payment.status,
+      externalReference: payment.external_reference,
+      amount: payment.transaction_amount
+    })
+
+    // Extraer información de la referencia externa
+    // Formato: subscription_{userId}_{planId}_{timestamp}
+    const externalRef = payment.external_reference || ''
+    const refParts = externalRef.split('_')
+    
+    if (refParts.length < 3 || refParts[0] !== 'subscription') {
+      console.error('Referencia externa inválida:', externalRef)
+      return NextResponse.json({ received: true })
+    }
+
+    const userId = refParts[1]
+    const planId = refParts[2]
+
+    // Buscar si ya existe una suscripción con este payment_id
+    const suscripcionExistente = await suscripcionesService.buscarPorExternalReference(externalRef)
+
+    if (payment.status === 'approved') {
+      // Pago aprobado - crear o actualizar suscripción
+      if (suscripcionExistente) {
+        // Actualizar suscripción existente
+        await suscripcionesService.actualizarSuscripcionPorPaymentId(
+          String(payment.id),
+          {
+            estado: 'activo',
+            mp_payment_status: payment.status
+          }
+        )
+        console.log('✅ Suscripción actualizada:', suscripcionExistente.suscripcion_id)
+      } else {
+        // Crear nueva suscripción
+        const fechaFin = payment.date_approved 
+          ? new Date(new Date(payment.date_approved).getTime() + (365 * 24 * 60 * 60 * 1000)).toISOString() // 1 año desde aprobación
+          : null
+
+        await suscripcionesService.crearSuscripcion({
+          usuario_id: userId,
+          plan: planId,
+          estado: 'activo',
+          fecha_inicio: payment.date_approved || new Date().toISOString(),
+          fecha_fin: fechaFin,
+          mp_payment_id: String(payment.id),
+          mp_payment_status: payment.status,
+          mp_external_reference: externalRef
+        })
+        console.log('✅ Nueva suscripción creada para usuario:', userId)
+      }
+    } else if (payment.status === 'rejected' || payment.status === 'cancelled') {
+      // Pago rechazado o cancelado
+      if (suscripcionExistente) {
+        await suscripcionesService.actualizarSuscripcionPorPaymentId(
+          String(payment.id),
+          {
+            estado: 'cancelada',
+            mp_payment_status: payment.status
+          }
+        )
+        console.log('❌ Suscripción cancelada:', suscripcionExistente.suscripcion_id)
+      }
+    } else if (payment.status === 'pending') {
+      // Pago pendiente
+      if (!suscripcionExistente) {
+        await suscripcionesService.crearSuscripcion({
+          usuario_id: userId,
+          plan: planId,
+          estado: 'pendiente',
+          fecha_inicio: new Date().toISOString(),
+          mp_payment_id: String(payment.id),
+          mp_payment_status: payment.status,
+          mp_external_reference: externalRef
+        })
+        console.log('⏳ Suscripción pendiente creada para usuario:', userId)
+      }
     }
 
     // Siempre retornar 200 para que Mercado Pago sepa que recibimos la notificación

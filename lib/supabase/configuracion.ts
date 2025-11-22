@@ -19,8 +19,8 @@ export class ConfiguracionService {
         id: 'estudiante',
         nombre: 'Plan Estudiante',
         descripcion: 'Perfecto para estudiantes individuales',
-        precio_mensual: 9.99,
-        precio_anual: 99.99,
+        precio_mensual: 100,
+        precio_anual: 1000,
         caracteristicas: [
           'Acceso completo a la plataforma',
           'Soporte por email',
@@ -34,8 +34,8 @@ export class ConfiguracionService {
         id: 'familiar',
         nombre: 'Plan Familiar',
         descripcion: 'Ideal para familias con múltiples estudiantes',
-        precio_mensual: 14.99,
-        precio_anual: 149.99,
+        precio_mensual: 250,
+        precio_anual: 2500,
         caracteristicas: [
           'Todo lo del Plan Estudiante',
           'Hasta 5 usuarios',
@@ -52,7 +52,7 @@ export class ConfiguracionService {
       planes,
       descuento_anual: 16.67, // ~2 meses gratis
       periodo_prueba_dias: 7,
-      moneda: 'USD'
+      moneda: 'ARS'
     }
   }
 

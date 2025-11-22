@@ -33,7 +33,8 @@ export async function POST(request: NextRequest) {
     
     // Si no hay usuario autenticado, usar datos del body
     const userId = user?.id || 'guest_' + Date.now()
-    const userEmail = user?.email || body.userEmail || 'test@example.com'
+    // Usar un email válido para sandbox de Mercado Pago
+    const userEmail = user?.email || body.userEmail || 'test_user@testuser.com'
 
     // Validar datos requeridos
     if (!planId || !planName || !amount || !currency || !frequency) {
@@ -64,10 +65,18 @@ export async function POST(request: NextRequest) {
     console.log('✅ Preferencia creada exitosamente:', preference.id)
 
     // Determinar qué URL usar según el tipo de credenciales
-    const isProduction = process.env.MERCADOPAGO_ACCESS_TOKEN?.startsWith('APP_USR-')
-    const paymentUrl = isProduction 
-      ? preference.init_point 
-      : (preference.sandbox_init_point || preference.init_point)
+    // En TEST siempre usar sandbox_init_point
+    const isTest = process.env.MERCADOPAGO_ACCESS_TOKEN?.startsWith('TEST-')
+    const paymentUrl = isTest 
+      ? (preference.sandbox_init_point || preference.init_point)
+      : preference.init_point
+      
+    console.log('🔗 URL de pago seleccionada:', {
+      isTest,
+      hasSandbox: !!preference.sandbox_init_point,
+      hasInit: !!preference.init_point,
+      usingUrl: paymentUrl?.substring(0, 80) + '...'
+    })
 
     return NextResponse.json({
       success: true,

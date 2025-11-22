@@ -24,7 +24,7 @@ export default function PricingSection() {
     },
     {
       name: 'Plan Estudiante',
-      price: '$9.99',
+      price: '$100 ARS',
       period: '/mes',
       description: 'Ideal para estudiantes individuales',
       features: [
@@ -42,7 +42,7 @@ export default function PricingSection() {
     },
     {
       name: 'Plan Familiar',
-      price: '$14.99',
+      price: '$250 ARS',
       period: '/mes',
       description: 'Perfecto para familias múltiples',
       features: [
@@ -138,8 +138,8 @@ export default function PricingSection() {
                             id: plan.name.toLowerCase().replace(' ', '-'),
                             nombre: plan.name,
                             descripcion: plan.description,
-                            precio_mensual: parseFloat(plan.price.replace('$', '')),
-                            precio_anual: plan.name === 'Plan Familiar' ? 149.99 : 99.99,
+                            precio_mensual: parseFloat(plan.price.replace('$', '').replace(' ARS', '')),
+                            precio_anual: plan.name === 'Plan Familiar' ? 2500 : 1000, // Precios en ARS
                             caracteristicas: plan.features,
                             activo: true
                           }}
@@ -156,8 +156,8 @@ export default function PricingSection() {
                           id: plan.name.toLowerCase().replace(' ', '-'),
                           nombre: plan.name,
                           descripcion: plan.description,
-                          precio_mensual: parseFloat(plan.price.replace('$', '')),
-                          precio_anual: plan.name === 'Plan Familiar' ? 149.99 : 99.99,
+                          precio_mensual: parseFloat(plan.price.replace('$', '').replace(' ARS', '')),
+                          precio_anual: plan.name === 'Plan Familiar' ? 2500 : 1000, // Precios en ARS
                           caracteristicas: plan.features,
                           activo: true
                         }}

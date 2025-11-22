@@ -93,10 +93,12 @@ export async function POST(request: NextRequest) {
     let userMessage = 'Error al crear preferencia de pago'
     if (errorMessage.includes('no está configurado')) {
       userMessage = 'Mercado Pago no está configurado. Por favor, configura las credenciales.'
-    } else if (errorMessage.includes('401') || errorMessage.includes('Unauthorized')) {
-      userMessage = 'Credenciales de Mercado Pago inválidas. Verifica tu Access Token.'
+    } else if (errorMessage.includes('401') || errorMessage.includes('Unauthorized') || errorMessage.includes('Credenciales inválidas')) {
+      userMessage = 'Credenciales inválidas. El token parece ser un ID de usuario, no un Access Token. Ve al Panel de Desarrolladores → Cuentas de prueba → Copia el Access Token (no el ID).'
     } else if (errorMessage.includes('400') || errorMessage.includes('Bad Request')) {
       userMessage = 'Datos inválidos para crear el pago. Verifica la información del plan.'
+    } else if (errorMessage.includes('TESTUSER')) {
+      userMessage = 'El token parece ser un ID de usuario. Necesitas el Access Token de la cuenta de prueba. Ve al Panel de Desarrolladores → Cuentas de prueba → Copia el Access Token.'
     }
     
     return NextResponse.json(

@@ -126,11 +126,33 @@ export class MercadoPagoService {
         init_point: response.init_point,
         sandbox_init_point: response.sandbox_init_point || response.init_point
       }
-    } catch (error) {
+    } catch (error: any) {
       // Log detallado del error
-      console.error('Error al crear preferencia de Mercado Pago:', error)
+      console.error('❌ Error al crear preferencia de Mercado Pago:', error)
       console.error('Tipo de error:', typeof error)
-      console.error('Error completo:', JSON.stringify(error, null, 2))
+      
+      // Extraer información útil del error
+      const errorMessage = error?.message || String(error)
+      const errorStatus = error?.status || error?.statusCode
+      const errorResponse = error?.response || error?.data
+      
+      console.error('📋 Detalles del error:', {
+        message: errorMessage,
+        status: errorStatus,
+        response: errorResponse ? JSON.stringify(errorResponse, null, 2) : 'N/A',
+        accessTokenPrefix: process.env.MERCADOPAGO_ACCESS_TOKEN?.substring(0, 20) + '...'
+      })
+      
+      // Mensajes de error más específicos
+      if (errorStatus === 401 || errorMessage.includes('401') || errorMessage.includes('Unauthorized')) {
+        throw new Error('Credenciales inválidas. Verifica que el Access Token sea correcto. Los tokens de cuentas de prueba deben obtenerse desde el Panel de Desarrolladores.')
+      }
+      if (errorStatus === 400 || errorMessage.includes('400') || errorMessage.includes('Bad Request')) {
+        throw new Error(`Datos inválidos: ${errorMessage}. Verifica la información de la preferencia.`)
+      }
+      if (errorMessage.includes('TESTUSER')) {
+        throw new Error('El token parece ser un ID de usuario, no un Access Token. Ve al Panel de Desarrolladores → Cuentas de prueba → Copia el Access Token (no el ID de usuario).')
+      }
       
       // Extraer mensaje del error
       let errorMessage = 'Error desconocido'

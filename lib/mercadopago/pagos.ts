@@ -102,8 +102,13 @@ export class MercadoPagoService {
         console.error('Stack:', error.stack)
       } else if (typeof error === 'object' && error !== null) {
         // Intentar extraer mensaje de objeto de error
-        const errorObj = error as any
-        errorMessage = errorObj.message || errorObj.error || errorObj.statusText || JSON.stringify(error)
+        const errorObj = error as Record<string, unknown>
+        errorMessage = String(
+          errorObj.message || 
+          errorObj.error || 
+          errorObj.statusText || 
+          JSON.stringify(error)
+        )
         console.error('Error objeto:', errorObj)
       }
       
@@ -139,13 +144,10 @@ export class MercadoPagoService {
   /**
    * Verifica la firma del webhook (seguridad)
    */
-  verifyWebhookSignature(
-    xSignature: string,
-    xRequestId: string,
-    dataId: string
-  ): boolean {
+  verifyWebhookSignature(): boolean {
     // Implementar verificación de firma si es necesario
     // Por ahora retornamos true, pero en producción deberías verificar
+    // TODO: Implementar verificación de firma con xSignature, xRequestId, dataId
     return true
   }
 }

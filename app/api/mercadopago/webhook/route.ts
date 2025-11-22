@@ -13,19 +13,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ received: true })
     }
 
-    const paymentId = body.data.id
-    const supabase = await createSupabaseServerClient()
-
     // Obtener información del pago desde Mercado Pago
     // Nota: Necesitarías hacer una llamada a la API de Mercado Pago aquí
     // Por ahora, procesamos con la información del webhook
-    
-    // Extraer información de la referencia externa
-    // Formato: subscription_{userId}_{planId}_{timestamp}
-    const externalReference = body.data.id // Esto debería venir del pago real
-    
-    // Buscar la suscripción relacionada
-    // Por ahora, actualizamos el estado basado en el webhook
     
     if (body.action === 'payment.created' || body.action === 'payment.updated') {
       // El pago fue creado o actualizado
@@ -35,10 +25,14 @@ export async function POST(request: NextRequest) {
       // 3. Activar/desactivar según el estado del pago
       
       console.log('Webhook recibido:', {
-        paymentId,
+        paymentId: body.data.id,
         action: body.action,
         type: body.type
       })
+      
+      // TODO: Implementar lógica para actualizar suscripción en base de datos
+      // const supabase = await createSupabaseServerClient()
+      // Actualizar suscripción según el estado del pago
     }
 
     // Siempre retornar 200 para que Mercado Pago sepa que recibimos la notificación

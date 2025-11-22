@@ -54,6 +54,8 @@ export interface CreatePreferenceRequest {
   expires?: boolean
   expiration_date_from?: string
   expiration_date_to?: string
+  metadata?: Record<string, unknown>
+  binary_mode?: boolean
 }
 
 export interface MercadoPagoPayment {

@@ -76,7 +76,6 @@ export class MercadoPagoService {
         ],
         payer: {
           email: data.userEmail || 'test_user@testuser.com',
-          // Agregar más información del payer para sandbox
           name: 'Test',
           surname: 'User'
         },
@@ -89,7 +88,12 @@ export class MercadoPagoService {
         notification_url: `${baseUrl}/api/mercadopago/webhook`,
         external_reference: `subscription_${data.userId}_${data.planId}_${Date.now()}`,
         statement_descriptor: 'BrainBuddy',
-        binary_mode: false // Permitir pagos en proceso
+        binary_mode: false,
+        // Agregar campos adicionales para sandbox
+        metadata: {
+          test: true,
+          integration_type: 'subscription'
+        }
       } as CreatePreferenceRequest
       
       // Validar que las URLs estén definidas antes de enviar

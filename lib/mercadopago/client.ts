@@ -5,12 +5,17 @@ export function createMercadoPagoClient() {
   const accessToken = process.env.MERCADOPAGO_ACCESS_TOKEN
 
   if (!accessToken) {
-    // En desarrollo, usar un token de prueba si no está configurado
-    if (process.env.NODE_ENV === 'development') {
-      console.warn('⚠️ MERCADOPAGO_ACCESS_TOKEN no está configurado. Usando modo de prueba.')
-      // Retornar null para que el servicio maneje el error gracefully
+    // Durante el build, no lanzar error, solo retornar null
+    // El error se lanzará cuando se intente usar el cliente
+    if (process.env.NEXT_PHASE === 'phase-production-build') {
       return null
     }
+    // En desarrollo, retornar null para manejo graceful
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('⚠️ MERCADOPAGO_ACCESS_TOKEN no está configurado. Usando modo de prueba.')
+      return null
+    }
+    // En runtime, lanzar error
     throw new Error('MERCADOPAGO_ACCESS_TOKEN no está configurado en las variables de entorno')
   }
 

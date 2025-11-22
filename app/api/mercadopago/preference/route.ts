@@ -7,12 +7,12 @@ export const maxDuration = 30
 
 export async function POST(request: NextRequest) {
   try {
-    // Verificar que Mercado Pago esté configurado
+    // Verificar que Mercado Pago esté configurado (solo en runtime, no durante build)
     if (!process.env.MERCADOPAGO_ACCESS_TOKEN) {
       return NextResponse.json(
         { 
           error: 'Mercado Pago no está configurado',
-          message: 'Por favor, configura MERCADOPAGO_ACCESS_TOKEN en tus variables de entorno'
+          message: 'Por favor, configura MERCADOPAGO_ACCESS_TOKEN en tus variables de entorno en Vercel'
         },
         { status: 500 }
       )

@@ -6,12 +6,16 @@ import type {
 } from '@/lib/types/mercadopago'
 
 export class MercadoPagoService {
-  private client = createMercadoPagoClient()
+  private _client: ReturnType<typeof createMercadoPagoClient> | null = null
 
-  constructor() {
-    if (!this.client) {
-      console.warn('⚠️ Mercado Pago no está configurado. Las funciones de pago no estarán disponibles.')
+  private get client() {
+    if (!this._client) {
+      this._client = createMercadoPagoClient()
+      if (!this._client) {
+        throw new Error('Mercado Pago no está configurado. Por favor, configura MERCADOPAGO_ACCESS_TOKEN en tus variables de entorno.')
+      }
     }
+    return this._client
   }
 
   /**

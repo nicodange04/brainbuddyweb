@@ -154,36 +154,16 @@ export class MercadoPagoService {
         throw new Error('El token parece ser un ID de usuario, no un Access Token. Ve al Panel de Desarrolladores → Cuentas de prueba → Copia el Access Token (no el ID de usuario).')
       }
       
-      // Extraer mensaje del error
-      let errorMessage = 'Error desconocido'
-      
-      if (error instanceof Error) {
-        errorMessage = error.message
-        console.error('Mensaje de error:', errorMessage)
-        console.error('Stack:', error.stack)
-      } else if (typeof error === 'object' && error !== null) {
-        // Intentar extraer mensaje de objeto de error
+      // Si el error no es un Error estándar, obtener más información
+      if (!(error instanceof Error) && typeof error === 'object' && error !== null) {
         const errorObj = error as Record<string, unknown>
-        errorMessage = String(
-          errorObj.message || 
-          errorObj.error || 
-          errorObj.statusText || 
-          JSON.stringify(error)
-        )
-        console.error('Error objeto:', errorObj)
+        const additionalInfo = errorObj.message || errorObj.error || errorObj.statusText
+        if (additionalInfo) {
+          console.error('Información adicional del error:', additionalInfo)
+        }
       }
       
-      // Mensajes de error más específicos
-      if (errorMessage.includes('401') || errorMessage.includes('Unauthorized') || errorMessage.includes('authentication')) {
-        throw new Error('Credenciales de Mercado Pago inválidas. Verifica tu Access Token en .env.local')
-      }
-      if (errorMessage.includes('400') || errorMessage.includes('Bad Request')) {
-        throw new Error('Datos inválidos para crear el pago. Verifica los datos del plan.')
-      }
-      if (errorMessage.includes('network') || errorMessage.includes('fetch')) {
-        throw new Error('Error de conexión con Mercado Pago. Verifica tu conexión a internet.')
-      }
-      
+      // Lanzar error con mensaje detallado
       throw new Error(`Error al crear preferencia de pago: ${errorMessage}`)
     }
   }

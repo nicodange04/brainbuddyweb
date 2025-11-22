@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createSupabaseServerClient } from '@/lib/supabase/server'
-import type { MercadoPagoWebhook, MercadoPagoPayment } from '@/lib/types/mercadopago'
+import type { MercadoPagoWebhook } from '@/lib/types/mercadopago'
 
 export const maxDuration = 30
 

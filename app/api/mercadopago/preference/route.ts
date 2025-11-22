@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
     try {
       const authResult = await authService.getCurrentUser()
       user = authResult.user
-    } catch (error) {
+    } catch {
       console.warn('Usuario no autenticado, continuando con datos del body')
     }
     

@@ -7,7 +7,6 @@ import type { PlanSuscripcion } from '@/lib/types/configuracion'
 interface CheckoutButtonProps {
   plan: PlanSuscripcion
   frequency: 'monthly' | 'annual'
-  onSuccess?: () => void
   onError?: (error: string) => void
   variant?: 'primary' | 'secondary' | 'accent'
   size?: 'sm' | 'md' | 'lg'
@@ -17,7 +16,6 @@ interface CheckoutButtonProps {
 export default function CheckoutButton({ 
   plan, 
   frequency, 
-  onSuccess, 
   onError,
   variant = 'primary',
   size = 'lg',

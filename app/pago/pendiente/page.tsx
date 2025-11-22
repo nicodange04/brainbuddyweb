@@ -1,12 +1,10 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
 import Card from '@/app/components/Card'
 import Button from '@/app/components/Button'
 import Link from 'next/link'
 
 export default function PagoPendientePage() {
-  const router = useRouter()
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">

@@ -41,7 +41,7 @@ export class MercadoPagoService {
       const preferenceData: CreatePreferenceRequest = {
         items: [
           {
-            id: data.planId,
+            id: data.planId || `plan-${data.planName.toLowerCase().replace(/\s+/g, '-')}`,
             title: data.planName,
             description,
             quantity: 1,
@@ -60,7 +60,7 @@ export class MercadoPagoService {
         notification_url: `${baseUrl}/api/mercadopago/webhook`,
         external_reference: `subscription_${data.userId}_${data.planId}_${Date.now()}`,
         statement_descriptor: 'BrainBuddy'
-      }
+      } as CreatePreferenceRequest
       
       // Validar que las URLs estén definidas antes de enviar
       if (!preferenceData.back_urls?.success) {
@@ -131,7 +131,7 @@ export class MercadoPagoService {
   /**
    * Obtiene información de un pago
    */
-  async getPayment(_paymentId: string) {
+  async getPayment() {
     try {
       // Nota: Necesitarías el SDK de Payments para esto
       // Por ahora retornamos null y lo manejamos en el webhook

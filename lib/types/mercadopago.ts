@@ -7,7 +7,7 @@ export interface MercadoPagoPreference {
 }
 
 export interface MercadoPagoItem {
-  id?: string
+  id: string
   title: string
   description: string
   quantity: number
@@ -30,7 +30,7 @@ export interface MercadoPagoPayer {
   address?: {
     zip_code?: string
     street_name?: string
-    street_number?: number
+    street_number?: string
   }
 }
 

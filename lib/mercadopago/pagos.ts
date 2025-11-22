@@ -41,6 +41,7 @@ export class MercadoPagoService {
       const preferenceData: CreatePreferenceRequest = {
         items: [
           {
+            id: data.planId,
             title: data.planName,
             description,
             quantity: 1,

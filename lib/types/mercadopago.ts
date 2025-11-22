@@ -7,6 +7,7 @@ export interface MercadoPagoPreference {
 }
 
 export interface MercadoPagoItem {
+  id?: string
   title: string
   description: string
   quantity: number

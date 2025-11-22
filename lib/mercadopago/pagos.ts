@@ -110,9 +110,7 @@ export class MercadoPagoService {
         hasInitPoint: !!response.init_point,
         hasSandboxInitPoint: !!response.sandbox_init_point,
         initPoint: response.init_point?.substring(0, 100) + '...',
-        sandboxInitPoint: response.sandbox_init_point?.substring(0, 100) + '...',
-        status: response.status,
-        status_detail: response.status_detail
+        sandboxInitPoint: response.sandbox_init_point?.substring(0, 100) + '...'
       })
 
       if (!response.id || !response.init_point) {

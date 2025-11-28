@@ -12,47 +12,94 @@ export class ConfiguracionService {
 
   // Obtener configuración de planes
   private async getConfiguracionPlanes() {
-    // Por ahora retornamos configuración hardcodeada
-    // En el futuro se puede mover a una tabla de configuración
-    const planes: PlanSuscripcion[] = [
-      {
-        id: 'estudiante',
-        nombre: 'Plan Estudiante',
-        descripcion: 'Perfecto para estudiantes individuales',
-        precio_mensual: 100,
-        precio_anual: 1000,
-        caracteristicas: [
-          'Acceso completo a la plataforma',
-          'Soporte por email',
-          'Proyectos ilimitados',
-          'Exportación de datos'
-        ],
-        activo: true,
-        limite_usuarios: 1
-      },
-      {
-        id: 'familiar',
-        nombre: 'Plan Familiar',
-        descripcion: 'Ideal para familias con múltiples estudiantes',
-        precio_mensual: 250,
-        precio_anual: 2500,
-        caracteristicas: [
-          'Todo lo del Plan Estudiante',
-          'Hasta 5 usuarios',
-          'Panel de padres',
-          'Reportes familiares',
-          'Soporte prioritario'
-        ],
-        activo: true,
-        limite_usuarios: 5
-      }
-    ]
+    // Función helper para retornar planes por defecto
+    const getDefaultPlanes = () => ({
+      planes: [
+        {
+          id: 'estudiante',
+          nombre: 'Plan Estudiante',
+          descripcion: 'Ideal para estudiantes individuales',
+          precio_mensual: 100,
+          precio_anual: 1000,
+          caracteristicas: [
+            'Hasta 5 exámenes simultáneos',
+            'Sesiones de estudio ilimitadas',
+            'Generación de contenido con IA',
+            'Gamificación completa',
+            '1 padre puede vincularse',
+            'Reportes de progreso',
+            'Soporte prioritario'
+          ],
+          activo: true,
+          limite_usuarios: 1
+        },
+        {
+          id: 'familiar',
+          nombre: 'Plan Familiar',
+          descripcion: 'Perfecto para familias múltiples',
+          precio_mensual: 250,
+          precio_anual: 2500,
+          caracteristicas: [
+            'Todo lo del Plan Estudiante',
+            'Hasta 3 alumnos por cuenta',
+            'Exámenes ilimitados',
+            'Múltiples padres pueden vincularse',
+            'Reportes comparativos entre hermanos',
+            'Dashboard familiar',
+            'Soporte prioritario'
+          ],
+          activo: true,
+          limite_usuarios: 3
+        }
+      ] as PlanSuscripcion[],
+      descuento_anual: 16.67,
+      periodo_prueba_dias: 14,
+      moneda: 'ARS' as const
+    })
 
-    return {
-      planes,
-      descuento_anual: 16.67, // ~2 meses gratis
-      periodo_prueba_dias: 7,
-      moneda: 'ARS'
+    try {
+      const { data: planesData, error } = await this.supabase
+        .from('planes' as any)
+        .select('*')
+        .order('precio_mensual', { ascending: true })
+
+      if (error) {
+        console.error('Error al obtener planes:', error)
+        // Si la tabla no existe aún, retornar planes por defecto
+        return getDefaultPlanes()
+      }
+
+      if (!planesData || planesData.length === 0) {
+        // Si no hay planes en la BD, retornar planes por defecto
+        return getDefaultPlanes()
+      }
+
+      const planes: PlanSuscripcion[] = planesData.map((plan: any) => ({
+        id: plan.plan_id,
+        nombre: plan.nombre,
+        descripcion: plan.descripcion || '',
+        precio_mensual: Number(plan.precio_mensual),
+        precio_anual: plan.precio_anual ? Number(plan.precio_anual) : undefined,
+        caracteristicas: Array.isArray(plan.caracteristicas) 
+          ? plan.caracteristicas as string[]
+          : typeof plan.caracteristicas === 'string'
+          ? JSON.parse(plan.caracteristicas)
+          : [],
+        activo: plan.activo,
+        limite_usuarios: plan.limite_usuarios || undefined,
+        limite_proyectos: plan.limite_proyectos || undefined
+      }))
+
+      return {
+        planes,
+        descuento_anual: 16.67, // ~2 meses gratis
+        periodo_prueba_dias: 14,
+        moneda: 'ARS' as const
+      }
+    } catch (err) {
+      console.error('Error inesperado al obtener planes:', err)
+      // En caso de cualquier error, retornar planes por defecto
+      return getDefaultPlanes()
     }
   }
 
@@ -161,10 +208,53 @@ export class ConfiguracionService {
 
   // Actualizar plan
   async actualizarPlan(planId: string, datosActualizados: Partial<PlanSuscripcion>) {
-    // Por ahora solo simulamos la actualización
-    // En el futuro se puede implementar con una tabla de configuración
-    console.log(`Actualizando plan ${planId}:`, datosActualizados)
-    return { success: true, message: 'Plan actualizado correctamente' }
+    try {
+      const updateData: Record<string, unknown> = {
+        updated_at: new Date().toISOString()
+      }
+
+      if (datosActualizados.precio_mensual !== undefined) {
+        updateData.precio_mensual = datosActualizados.precio_mensual
+      }
+
+      if (datosActualizados.precio_anual !== undefined) {
+        updateData.precio_anual = datosActualizados.precio_anual
+      }
+
+      if (datosActualizados.activo !== undefined) {
+        updateData.activo = datosActualizados.activo
+      }
+
+      if (datosActualizados.nombre !== undefined) {
+        updateData.nombre = datosActualizados.nombre
+      }
+
+      if (datosActualizados.descripcion !== undefined) {
+        updateData.descripcion = datosActualizados.descripcion
+      }
+
+      if (datosActualizados.caracteristicas !== undefined) {
+        updateData.caracteristicas = JSON.stringify(datosActualizados.caracteristicas)
+      }
+
+      if (datosActualizados.limite_usuarios !== undefined) {
+        updateData.limite_usuarios = datosActualizados.limite_usuarios
+      }
+
+      const { error } = await this.supabase
+        .from('planes' as any)
+        .update(updateData)
+        .eq('plan_id', planId)
+
+      if (error) {
+        throw new Error(`Error al actualizar plan: ${error.message}`)
+      }
+
+      return { success: true, message: 'Plan actualizado correctamente' }
+    } catch (err) {
+      console.error('Error al actualizar plan:', err)
+      throw err instanceof Error ? err : new Error('Error desconocido al actualizar plan')
+    }
   }
 
   // Agregar administrador

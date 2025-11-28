@@ -37,7 +37,7 @@ export default function Navigation() {
             <Button href="/admin/login" variant="secondary" size="md">
               Admin Login
             </Button>
-            <Button href="#pricing" variant="primary">
+            <Button href="/brainbuddyapp.apk" variant="primary">
               Empieza Gratis 14 Días
             </Button>
           </div>

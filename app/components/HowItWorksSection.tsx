@@ -1,3 +1,5 @@
+import Button from './Button';
+
 export default function HowItWorksSection() {
   const steps = [
     {
@@ -86,12 +88,12 @@ export default function HowItWorksSection() {
         {/* CTA */}
         <div className="text-center mt-12">
           <div className="inline-flex flex-col sm:flex-row gap-4">
-            <button className="bg-violet-500 text-white px-8 py-3 rounded-lg font-medium hover:bg-violet-600 transition-colors">
+            <Button href="/brainbuddyapp.apk" variant="primary" size="lg">
               Comenzar gratis
-            </button>
-            <button className="border border-gray-300 text-gray-700 px-8 py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors">
+            </Button>
+            <Button href="#features" variant="secondary" size="lg">
               Ver demo
-            </button>
+            </Button>
           </div>
         </div>
       </div>

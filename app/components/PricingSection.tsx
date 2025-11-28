@@ -1,11 +1,83 @@
 'use client'
 
+import { useEffect, useState } from 'react';
 import Button from './Button';
 import Card from './Card';
 import CheckoutButton from './CheckoutButton';
+import { configuracionService } from '@/lib/supabase/configuracion';
+import { PlanSuscripcion } from '@/lib/types/configuracion';
 
 export default function PricingSection() {
-  const plans = [
+  const [plans, setPlans] = useState<PlanSuscripcion[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadPlans();
+  }, []);
+
+  const loadPlans = async () => {
+    try {
+      setLoading(true);
+      const config = await configuracionService.getConfiguracion();
+      // config.data.planes es un objeto ConfiguracionPlanes, el array está en .planes
+      const planesArray = config.data.planes?.planes || [];
+      setPlans(planesArray.filter(plan => plan.activo));
+    } catch (error) {
+      console.error('Error al cargar planes:', error);
+      // Fallback a planes por defecto
+      setPlans([
+        {
+          id: 'estudiante',
+          nombre: 'Plan Estudiante',
+          descripcion: 'Ideal para estudiantes individuales',
+          precio_mensual: 100,
+          precio_anual: 1000,
+          caracteristicas: [
+            'Hasta 5 exámenes simultáneos',
+            'Sesiones de estudio ilimitadas',
+            'Generación de contenido con IA',
+            'Gamificación completa',
+            '1 padre puede vincularse',
+            'Reportes de progreso',
+            'Soporte prioritario'
+          ],
+          activo: true,
+          limite_usuarios: 1
+        },
+        {
+          id: 'familiar',
+          nombre: 'Plan Familiar',
+          descripcion: 'Perfecto para familias múltiples',
+          precio_mensual: 250,
+          precio_anual: 2500,
+          caracteristicas: [
+            'Todo lo del Plan Estudiante',
+            'Hasta 3 alumnos por cuenta',
+            'Exámenes ilimitados',
+            'Múltiples padres pueden vincularse',
+            'Reportes comparativos entre hermanos',
+            'Dashboard familiar',
+            'Soporte prioritario'
+          ],
+          activo: true,
+          limite_usuarios: 3
+        }
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('es-AR', {
+      style: 'currency',
+      currency: 'ARS',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(price);
+  };
+
+  const displayPlans = [
     {
       name: 'Free Trial',
       price: 'Gratis',
@@ -22,43 +94,29 @@ export default function PricingSection() {
       isPopular: false,
       color: 'gray'
     },
-    {
-      name: 'Plan Estudiante',
-      price: '$100 ARS',
+    ...plans.map((plan, index) => ({
+      name: plan.nombre,
+      price: formatPrice(plan.precio_mensual),
       period: '/mes',
-      description: 'Ideal para estudiantes individuales',
-      features: [
-        'Hasta 5 exámenes simultáneos',
-        'Sesiones de estudio ilimitadas',
-        'Generación de contenido con IA',
-        'Gamificación completa',
-        '1 padre puede vincularse',
-        'Reportes de progreso',
-        'Soporte prioritario'
-      ],
+      description: plan.descripcion,
+      features: plan.caracteristicas,
       cta: 'Seleccionar plan',
-      isPopular: true,
-      color: 'violet'
-    },
-    {
-      name: 'Plan Familiar',
-      price: '$250 ARS',
-      period: '/mes',
-      description: 'Perfecto para familias múltiples',
-      features: [
-        'Todo lo del Plan Estudiante',
-        'Hasta 3 alumnos por cuenta',
-        'Exámenes ilimitados',
-        'Múltiples padres pueden vincularse',
-        'Reportes comparativos entre hermanos',
-        'Dashboard familiar',
-        'Soporte prioritario'
-      ],
-      cta: 'Seleccionar plan',
-      isPopular: false,
-      color: 'purple'
-    }
+      isPopular: index === 0,
+      color: plan.id === 'familiar' ? 'purple' : 'violet',
+      planData: plan
+    }))
   ];
+
+  if (loading) {
+    return (
+      <section id="pricing" className="section-padding px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="max-w-7xl mx-auto text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-500 mx-auto mb-4"></div>
+          <p className="text-gray-600">Cargando planes...</p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="pricing" className="section-padding px-4 sm:px-6 lg:px-8 bg-white">
@@ -76,7 +134,7 @@ export default function PricingSection() {
 
         {/* Pricing Cards */}
         <div className="grid md:grid-cols-3 gap-8 lg:gap-12">
-          {plans.map((plan, index) => (
+          {displayPlans.map((plan, index) => (
             <div key={index} className={`relative ${plan.isPopular ? 'scale-105' : ''}`}>
               {plan.isPopular && (
                 <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
@@ -120,6 +178,7 @@ export default function PricingSection() {
                   {/* CTA Button */}
                   {plan.name === 'Free Trial' ? (
                     <Button 
+                      href="/brainbuddyapp.apk"
                       variant={
                         plan.color === 'violet' ? 'accent' :
                         plan.color === 'purple' ? 'secondary' : 'primary'
@@ -130,43 +189,29 @@ export default function PricingSection() {
                       {plan.cta}
                     </Button>
                   ) : (
-                    <div className="space-y-2">
-                      {/* Botón Anual - Arriba, todo violeta */}
-                      {plan.name !== 'Free Trial' && (
+                    plan.planData && (
+                      <div className="space-y-2">
+                        {/* Botón Anual - Arriba, todo violeta */}
+                        {plan.planData.precio_anual && (
+                          <CheckoutButton
+                            plan={plan.planData}
+                            frequency="annual"
+                            variant="primary"
+                            size="lg"
+                            className="w-full"
+                          />
+                        )}
+                        
+                        {/* Botón Mensual - Abajo, borde violeta y texto violeta */}
                         <CheckoutButton
-                          plan={{
-                            id: plan.name.toLowerCase().replace(' ', '-'),
-                            nombre: plan.name,
-                            descripcion: plan.description,
-                            precio_mensual: parseFloat(plan.price.replace('$', '').replace(' ARS', '')),
-                            precio_anual: plan.name === 'Plan Familiar' ? 2500 : 1000, // Precios en ARS
-                            caracteristicas: plan.features,
-                            activo: true
-                          }}
-                          frequency="annual"
+                          plan={plan.planData}
+                          frequency="monthly"
                           variant="primary"
                           size="lg"
-                          className="w-full"
+                          className="w-full bg-transparent border-2 border-violet-500 text-violet-600 hover:bg-violet-50"
                         />
-                      )}
-                      
-                      {/* Botón Mensual - Abajo, borde violeta y texto violeta */}
-                      <CheckoutButton
-                        plan={{
-                          id: plan.name.toLowerCase().replace(' ', '-'),
-                          nombre: plan.name,
-                          descripcion: plan.description,
-                          precio_mensual: parseFloat(plan.price.replace('$', '').replace(' ARS', '')),
-                          precio_anual: plan.name === 'Plan Familiar' ? 2500 : 1000, // Precios en ARS
-                          caracteristicas: plan.features,
-                          activo: true
-                        }}
-                        frequency="monthly"
-                        variant="primary"
-                        size="lg"
-                        className="w-full bg-transparent border-2 border-violet-500 text-violet-600 hover:bg-violet-50"
-                      />
-                    </div>
+                      </div>
+                    )
                   )}
                 </div>
               </Card>

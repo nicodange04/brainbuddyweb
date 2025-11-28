@@ -60,15 +60,33 @@ export class ReportesService {
       throw new Error(`Error al obtener métricas financieras: ${error.message}`)
     }
 
+    // Obtener precios actuales de la tabla planes
+    const { data: planes, error: planesError } = await this.supabase
+      .from('planes' as any)
+      .select('plan_id, nombre, precio_mensual')
+      .eq('activo', true)
+
+    // Precios por defecto si no se pueden obtener de la BD
+    let precioEstudiante = 25000
+    let precioFamiliar = 37500
+
+    if (!planesError && planes) {
+      const planEstudiante = planes.find((p: any) => p.plan_id === 'estudiante' || p.nombre === 'Plan Estudiante')
+      const planFamiliar = planes.find((p: any) => p.plan_id === 'familiar' || p.nombre === 'Plan Familiar')
+      
+      if (planEstudiante) {
+        precioEstudiante = Number(planEstudiante.precio_mensual) || 25000
+      }
+      if (planFamiliar) {
+        precioFamiliar = Number(planFamiliar.precio_mensual) || 37500
+      }
+    }
+
     const suscripcionesActivas = suscripciones.filter(s => s.estado === 'activo')
     
     // Contar por plan
     const estudianteActivas = suscripcionesActivas.filter(s => s.plan === 'Plan Estudiante').length
     const familiarActivas = suscripcionesActivas.filter(s => s.plan === 'Plan Familiar').length
-
-    // Calcular ingresos (precios estimados)
-    const precioEstudiante = 100
-    const precioFamiliar = 250
     
     const ingresosEstudiante = estudianteActivas * precioEstudiante
     const ingresosFamiliar = familiarActivas * precioFamiliar

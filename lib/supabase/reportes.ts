@@ -61,8 +61,14 @@ export class ReportesService {
     }
 
     // Obtener precios actuales de la tabla planes
+    interface PlanPrecio {
+      plan_id: string
+      nombre: string
+      precio_mensual: number
+    }
+
     const { data: planes, error: planesError } = await this.supabase
-      .from('planes' as any)
+      .from('planes' as never)
       .select('plan_id, nombre, precio_mensual')
       .eq('activo', true)
 
@@ -71,8 +77,9 @@ export class ReportesService {
     let precioFamiliar = 37500
 
     if (!planesError && planes) {
-      const planEstudiante = planes.find((p: any) => p.plan_id === 'estudiante' || p.nombre === 'Plan Estudiante')
-      const planFamiliar = planes.find((p: any) => p.plan_id === 'familiar' || p.nombre === 'Plan Familiar')
+      const planesTyped = planes as PlanPrecio[]
+      const planEstudiante = planesTyped.find((p) => p.plan_id === 'estudiante' || p.nombre === 'Plan Estudiante')
+      const planFamiliar = planesTyped.find((p) => p.plan_id === 'familiar' || p.nombre === 'Plan Familiar')
       
       if (planEstudiante) {
         precioEstudiante = Number(planEstudiante.precio_mensual) || 25000

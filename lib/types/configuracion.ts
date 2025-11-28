@@ -1,5 +1,20 @@
 // Tipos para el sistema de configuración
 
+// Tipo para el plan desde la base de datos
+export interface PlanFromDB {
+  plan_id: string
+  nombre: string
+  descripcion: string | null
+  precio_mensual: number
+  precio_anual: number | null
+  caracteristicas: string | string[] | null
+  activo: boolean
+  limite_usuarios: number | null
+  limite_proyectos: number | null
+  created_at: string
+  updated_at: string
+}
+
 export interface PlanSuscripcion {
   id: string
   nombre: string

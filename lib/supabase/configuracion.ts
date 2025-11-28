@@ -3,6 +3,7 @@ import {
   ConfiguracionCompleta, 
   RespuestaConfiguracion,
   PlanSuscripcion,
+  PlanFromDB,
   AdminUsuario,
   InfoSistema
 } from '@/lib/types/configuracion'
@@ -59,7 +60,7 @@ export class ConfiguracionService {
 
     try {
       const { data: planesData, error } = await this.supabase
-        .from('planes' as any)
+        .from('planes' as never)
         .select('*')
         .order('precio_mensual', { ascending: true })
 
@@ -74,7 +75,7 @@ export class ConfiguracionService {
         return getDefaultPlanes()
       }
 
-      const planes: PlanSuscripcion[] = planesData.map((plan: any) => ({
+      const planes: PlanSuscripcion[] = (planesData as PlanFromDB[]).map((plan) => ({
         id: plan.plan_id,
         nombre: plan.nombre,
         descripcion: plan.descripcion || '',
@@ -242,7 +243,7 @@ export class ConfiguracionService {
       }
 
       const { error } = await this.supabase
-        .from('planes' as any)
+        .from('planes' as never)
         .update(updateData)
         .eq('plan_id', planId)
 

@@ -77,7 +77,32 @@ export default function PricingSection() {
     }).format(price);
   };
 
-  const displayPlans = [
+  // Tipo para planes de display
+  type DisplayPlan = 
+    | {
+        name: string;
+        price: string;
+        period: string;
+        description: string;
+        features: string[];
+        cta: string;
+        isPopular: boolean;
+        color: string;
+        planData?: never;
+      }
+    | {
+        name: string;
+        price: string;
+        period: string;
+        description: string;
+        features: string[];
+        cta: string;
+        isPopular: boolean;
+        color: string;
+        planData: PlanSuscripcion;
+      };
+
+  const displayPlans: DisplayPlan[] = [
     {
       name: 'Free Trial',
       price: 'Gratis',
@@ -189,7 +214,7 @@ export default function PricingSection() {
                       {plan.cta}
                     </Button>
                   ) : (
-                    plan.planData && (
+                    'planData' in plan && plan.planData ? (
                       <div className="space-y-2">
                         {/* Botón Anual - Arriba, todo violeta */}
                         {plan.planData.precio_anual && (
@@ -211,7 +236,7 @@ export default function PricingSection() {
                           className="w-full bg-transparent border-2 border-violet-500 text-violet-600 hover:bg-violet-50"
                         />
                       </div>
-                    )
+                    ) : null
                   )}
                 </div>
               </Card>

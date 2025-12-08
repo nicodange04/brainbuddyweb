@@ -1,4 +1,5 @@
 import Button from './Button';
+import { APK_URL } from '@/lib/config/constants';
 
 export default function Navigation() {
   return (
@@ -37,7 +38,7 @@ export default function Navigation() {
             <Button href="/admin/login" variant="secondary" size="md">
               Admin Login
             </Button>
-            <Button href="/brainbuddyapp.apk" variant="primary">
+            <Button href={APK_URL} variant="primary">
               Empieza Gratis 14 Días
             </Button>
           </div>

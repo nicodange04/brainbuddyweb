@@ -1,4 +1,5 @@
 import Button from './Button';
+import { APK_URL } from '@/lib/config/constants';
 
 export default function HowItWorksSection() {
   const steps = [
@@ -88,7 +89,7 @@ export default function HowItWorksSection() {
         {/* CTA */}
         <div className="text-center mt-12">
           <div className="inline-flex flex-col sm:flex-row gap-4">
-            <Button href="/brainbuddyapp.apk" variant="primary" size="lg">
+            <Button href={APK_URL} variant="primary" size="lg">
               Comenzar gratis
             </Button>
             <Button href="#features" variant="secondary" size="lg">

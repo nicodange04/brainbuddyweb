@@ -1,4 +1,5 @@
 import Button from './Button';
+import { APK_URL } from '@/lib/config/constants';
 
 export default function HeroSection() {
   return (
@@ -19,10 +20,10 @@ export default function HeroSection() {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 mb-8">
-              <Button href="/brainbuddyapp.apk" size="lg" variant="primary">
+              <Button href={APK_URL} size="lg" variant="primary">
                 Empieza gratis 14 días
               </Button>
-              <Button href="/brainbuddyapp.apk" size="lg" variant="secondary">
+              <Button href={APK_URL} size="lg" variant="secondary">
                 Descargar app móvil
               </Button>
             </div>

@@ -6,6 +6,7 @@ import Card from './Card';
 import CheckoutButton from './CheckoutButton';
 import { configuracionService } from '@/lib/supabase/configuracion';
 import { PlanSuscripcion } from '@/lib/types/configuracion';
+import { APK_URL } from '@/lib/config/constants';
 
 export default function PricingSection() {
   const [plans, setPlans] = useState<PlanSuscripcion[]>([]);
@@ -203,7 +204,7 @@ export default function PricingSection() {
                   {/* CTA Button */}
                   {plan.name === 'Free Trial' ? (
                     <Button 
-                      href="/brainbuddyapp.apk"
+                      href={APK_URL}
                       variant={
                         plan.color === 'violet' ? 'accent' :
                         plan.color === 'purple' ? 'secondary' : 'primary'

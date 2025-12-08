@@ -6,7 +6,12 @@ const nextConfig: NextConfig = {
   
   // Configuración de imágenes
   images: {
-    domains: ['localhost'],
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+      },
+    ],
     formats: ['image/webp', 'image/avif'],
   },
   
@@ -33,7 +38,7 @@ const nextConfig: NextConfig = {
     ];
   },
   
-  // Configuración experimental para Next.js 15
+  // Configuración experimental para Next.js 16
   experimental: {
     staleTimes: {
       dynamic: 30,

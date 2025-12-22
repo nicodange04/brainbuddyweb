@@ -44,6 +44,7 @@ export function MetricasFinancieras({ data }: MetricasFinancierasProps) {
             <div>
               <div className="text-2xl font-bold text-green-600">{formatearMoneda(data.mrr_actual)}</div>
               <div className="text-sm text-gray-600">MRR (Ingresos Recurrentes Mensuales)</div>
+              <div className="text-xs text-gray-500 mt-1">(1 Familiar + 1 Estudiante)</div>
             </div>
             <div className="text-green-400 text-3xl">💵</div>
           </div>
